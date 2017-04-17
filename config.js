@@ -7,7 +7,7 @@ const db = require('./lib/db.js'),
           port: 5959
         },
         production: {
-          awsUrl: 'https://s3.us-east-1.amazonaws.com/confused-production/comics/',
+          awsUrl: 'https://s3.amazonaws.com/confused-production/comics/',
           mode: 'production',
           port: process.env.PORT || 5000
         }

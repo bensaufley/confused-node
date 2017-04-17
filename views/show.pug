@@ -1,0 +1,28 @@
+doctype html
+html
+  head
+    title #{comic.title} | Confused: A Webcomic by Ben Saufley
+
+  body
+    header
+      h1 Confused
+      h2
+        | A Webcomic by
+        |
+        a(href='http://bensaufley.com') Ben Saufley
+
+    article
+      header
+        h3= comic.title
+        time(datetime=moment(comic.date_added).toISOString()).
+          Published on #{moment(comic.date_added).format('dddd, MMMM Do, YYYY')}
+      img(src=comic.file_name title=comic.title)
+    nav
+      if prevIndex
+        a.prev(href=`/${prevIndex}`) Previous
+      if nextIndex
+        a.current(href='/') Most Recent
+        a.next(href=`/${nextIndex}`) Next
+      select(id='comics')
+        each record in comics
+          option(value=record.id selected=comic.id===record.id)= record.title

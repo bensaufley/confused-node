@@ -1,0 +1,29 @@
+{
+  "name": "confused",
+  "version": "1.0.0",
+  "description": "A webcomic by Ben Saufley",
+  "main": "app.js",
+  "scripts": {
+    "setup": "node tasks/setup.js",
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bensaufley/confused-node.git"
+  },
+  "author": "Ben Saufley <contact@bensaufley.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bensaufley/confused-node/issues"
+  },
+  "homepage": "https://github.com/bensaufley/confused-node#readme",
+  "dependencies": {
+    "aws-sdk": "^2.41.0",
+    "csv-parse": "^1.2.0",
+    "express": "^4.15.2",
+    "moment": "^2.18.1",
+    "pg": "^6.1.5",
+    "pug": "^2.0.0-beta11"
+  }
+}

@@ -1,11 +1,13 @@
 const db = require('./lib/db.js'),
-      AWS = require('aws-node'),
+      AWS = require('aws-sdk'),
       configs = {
         development: {
+          awsUrl: 'https://s3.us-east-2.amazonaws.com/confused-development/comics/',
           mode: 'development',
           port: 5959
         },
         production: {
+          awsUrl: 'https://s3.us-east-1.amazonaws.com/confused-production/comics/',
           mode: 'production',
           port: process.env.PORT || 5000
         }

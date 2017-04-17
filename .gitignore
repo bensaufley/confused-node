@@ -60,4 +60,4 @@ typings/
 # Comic files; no need to keep them in the repo
 comics
 
-.env*
+.aws.json

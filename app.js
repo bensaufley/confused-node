@@ -19,8 +19,8 @@ app.get('/:id?', (req, res, next) => {
       const reqId = parseInt(req.params.id, 10) || comics.rows[comics.rowCount - 1].id,
             comic = comics.rows.filter((c) => c.id === reqId)[0],
             comicIndex = comics.rows.findIndex((obj) => obj.id === comic.id),
-            prevIndex = comicIndex === 0 ? null : comicIndex - 1,
-            nextIndex = comicIndex === comics.rowCount - 1 ? null : comicIndex + 1;
+            prevIndex = comicIndex === 0 ? null : comics.rows[comicIndex - 1].id,
+            nextIndex = comicIndex === comics.rowCount - 1 ? null : comics.rows[comicIndex + 1].id;
 
       res.render('show', { comics: comics.rows, comic, prevIndex, nextIndex });
     })

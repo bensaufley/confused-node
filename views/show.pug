@@ -1,41 +1,41 @@
-doctype html
-html
-  head
-    title #{comic.title} | Confused: A Webcomic by Ben Saufley
-    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css')
-    link(rel='stylesheet' href='/styles.css')
-    meta(name='viewport' content='width=device-width,initial-scale=1')
+extends layout
 
-  body
-    header.page-header
-      nav
-        if prevIndex
-          a.prev(href=`/${prevIndex}`) Previous
-        if nextIndex
-          a.current(href='/') Most Recent
-          a.next(href=`/${nextIndex}`) Next
-      h1 Confused
-      h2
-        | A Webcomic by
-        |
-        a(href='http://bensaufley.com') Ben Saufley
+block title
+  title #{comic.title} | Confused: A Webcomic by Ben Saufley
 
-    article.comic
-      header
-        h3= comic.title
-        time(datetime=moment(comic.date_added).toISOString()).
-          Published on #{moment(comic.date_added).format('dddd, MMMM Do, YYYY')}
-      img.comic(src=`${awsUrl}${comic.file_name}` alt=`Comic: ${comic.title}`)
+block body
+  header.page-header
     nav
       if prevIndex
         a.prev(href=`/${prevIndex}`) Previous
       if nextIndex
         a.current(href='/') Most Recent
         a.next(href=`/${nextIndex}`) Next
-      select(id='comics')
+    h1.
+      Con<span />fused
+    h2
+      | A Webcomic by
+      |
+      a(href='http://bensaufley.com') Ben Saufley
+
+  article.comic
+    header
+      h3= comic.title
+      time(datetime=moment(comic.date_added).toISOString()).
+        Published on #{moment(comic.date_added).format('dddd, MMMM Do, YYYY')}
+    img.comic(src=`${awsUrl}${comic.file_name}` alt=`Comic: ${comic.title}`)
+  nav
+    if prevIndex
+      a.prev(href=`/${prevIndex}`) Previous
+    if nextIndex
+      a.current(href='/') Most Recent
+      a.next(href=`/${nextIndex}`) Next
+    form(action='/' method='get')
+      select(id='comics' name='id')
         each record in comics
           option(value=record.id selected=comic.id===record.id)
             = record.title
             |
             | (#{moment(record.date_added).format('MMM D, YYYY')})
-    script(src='/scripts.js')
+      button(type='submit') Go
+  script(src='/assets/scripts.js')

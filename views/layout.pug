@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    block title
+    link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css')
+    link(rel='stylesheet' href='/assets/styles.css')
+    meta(name='viewport' content='width=device-width,initial-scale=1')
+    meta(http-equiv='Content-Type' content='text/html; charset=utf-8')
+    meta(name='copyright' content=`Confused is copyright ©2000-${new Date().getFullYear()} Ben Saufley.`)
+    meta(name='description' content='Confused is a slice-of-life webcomic by illustrator and web developer Ben Saufley.')
+    meta(name='keywords' content='webcomic,confused,comic,cartoon,illustration')
+    meta(name='robots' content='index,follow')
+    link(href='https://fonts.googleapis.com/css?family=Arvo|Rubik+Mono+One' rel='stylesheet')
+
+  body
+    block body
+    if process.env.NODE_ENV === 'production'
+      script
+        include ../public/ga.js

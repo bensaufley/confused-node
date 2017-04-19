@@ -6,11 +6,11 @@ block title
 block body
   header.page-header
     nav
-      if prevIndex
-        a.prev(href=`/${prevIndex}`) Previous
-      if nextIndex
+      if prevId
+        a.prev(href=`/${prevId}`) Previous
+      if nextId
         a.current(href='/') Most Recent
-        a.next(href=`/${nextIndex}`) Next
+        a.next(href=`/${nextId}`) Next
     h1.
       Con<span />fused
     h2
@@ -25,11 +25,11 @@ block body
         Published on #{moment(comic.date_added).format('dddd, MMMM Do, YYYY')}
     img.comic(src=`${awsUrl}${comic.file_name}` alt=`Comic: ${comic.title}`)
   nav
-    if prevIndex
-      a.prev(href=`/${prevIndex}`) Previous
-    if nextIndex
+    if prevId
+      a.prev(href=`/${prevId}`) Previous
+    if nextId
       a.current(href='/') Most Recent
-      a.next(href=`/${nextIndex}`) Next
+      a.next(href=`/${nextId}`) Next
     form(action='/' method='get')
       select(id='comics' name='id')
         each record in comics

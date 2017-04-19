@@ -1,5 +1,5 @@
 const db = require('./lib/db.js'),
-      AWS = require('aws-sdk'),
+      // AWS = require('aws-sdk'),
       configs = {
         development: {
           awsUrl: 'https://s3.us-east-2.amazonaws.com/confused-development/comics/',
@@ -15,6 +15,6 @@ const db = require('./lib/db.js'),
 
 let config = configs[process.env.NODE_ENV || 'development'];
 config.db = db;
-config.s3 = new AWS.S3();
+// config.s3 = new AWS.S3();
 
 module.exports = config;

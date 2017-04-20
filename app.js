@@ -39,15 +39,15 @@ app.get('/:id?', (req, res, next) => {
       if (req.params.id && isNaN(parseInt(req.params.id, 10))) throw new Error('Not valid ID');
 
       const reqId = req.params.id ? parseInt(req.params.id, 10) : comics.rows[comics.rowCount - 1].id,
-            comic = comics.rows.filter((c) => c.id === reqId)[0];
+            comicIndex = comics.rows.findIndex((c) => c.id === reqId);
 
-      if (!comic) throw new Error(`No comic for ID ${reqId}`);
+      if (comicIndex < 0) throw new Error(`No comic for ID ${reqId}`);
 
-      const comicIndex = comics.rows.findIndex((obj) => obj.id === comic.id),
+      const comic = comics.rows[comicIndex],
             prevId = comicIndex === 0 ? null : comics.rows[comicIndex - 1].id,
-            prevId = comicIndex === comics.rowCount - 1 ? null : comics.rows[comicIndex + 1].id;
+            nextId = comicIndex === comics.rowCount - 1 ? null : comics.rows[comicIndex + 1].id;
 
-      res.render('show', { comics: comics.rows, comic, prevId, prevId });
+      res.render('show', { comics: comics.rows, comic, prevId, nextId });
     })
     .catch((err) => {
       console.log('ERROR:', err.message, err.stack);

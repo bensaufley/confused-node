@@ -6,9 +6,9 @@ block title
 block body
   header.page-header
     nav
-      if prevId
+      if prevId !== null
         a.prev(href=`/${prevId}`) Previous
-      if nextId
+      if nextId !== null
         a.current(href='/') Most Recent
         a.next(href=`/${nextId}`) Next
     h1.
@@ -25,9 +25,9 @@ block body
         Published on #{moment(comic.date_added).format('dddd, MMMM Do, YYYY')}
     img.comic(src=`${awsUrl}${comic.file_name}` alt=`Comic: ${comic.title}`)
   nav
-    if prevId
+    if prevId !== null
       a.prev(href=`/${prevId}`) Previous
-    if nextId
+    if nextId !== null
       a.current(href='/') Most Recent
       a.next(href=`/${nextId}`) Next
     form(action='/' method='get')

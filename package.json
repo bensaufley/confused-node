@@ -17,6 +17,9 @@
   "bugs": {
     "url": "https://github.com/bensaufley/confused-node/issues"
   },
+  "engines": {
+    "node": "6.11.1"
+  },
   "homepage": "https://github.com/bensaufley/confused-node#readme",
   "dependencies": {
     "aws-sdk": "^2.41.0",

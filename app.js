@@ -1,58 +1,71 @@
 const config = require('./config.js'),
       express = require('express'),
+      morgan = require('morgan'),
       pug = require('pug'),
       oldComicListMap = require('./data/old-comic-list-map.json'),
       app = express();
 
+const comicsCache = { lastRetrieved: null, comics: [] };
+const expirationLength = 1000 * 60 * 60 * 12;
+const getComics = async () => {
+  const now = new Date();
+  if (comicsCache.comics.length && now - comicsCache.lastRetrieved < expirationLength) {
+    return comicsCache.comics;
+  }
+
+  const comics = await config.db.query('SELECT * FROM comics ORDER BY date_added ASC');
+  comicsCache.comics = comics.rows;
+  comicsCache.lastRetrieved = now;
+  return comics.rows;
+};
+
+const handleError = (res) => (err) => {
+  console.error('ERROR:', err.message, err.stack);
+  res.status(404).render('404');
+};
+
 app.set('port', config.port);
 app.use(express.static(__dirname + '/public'));
+app.use(morgan('combined'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');
 
 app.locals.moment = require('moment');
 app.locals.awsUrl = config.awsUrl;
 
-app.get('/:id?', (req, res, next) => {
+app.get('/:id?', async (req, res, next) => {
   if (req.query.id) {
     let reqId = req.query.id;
-    return new Promise((resolve, reject) => {
+    let id = reqId;
+    try {
       if (/bensaufley.com\/confused/.test(req.get('Referer')) || req.query.ref === 'old') {
         const comicTitle = oldComicListMap[reqId];
-        config.db.query('SELECT id FROM comics WHERE title = $1', [comicTitle])
-          .then((response) => { resolve(response.rows[0].id); })
-          .catch((err) => { reject(err) });
-      } else {
-        resolve(reqId);
+        const response = await config.db.query('SELECT id FROM comics WHERE title = $1', [comicTitle])
+        id = response.rows[0].id;
       }
-    })
-    .then((id) => {
-      res.redirect(301, `/${id}`);
-    })
-    .catch((err) => {
-      console.log('ERROR:', err.message, err.stack);
-      res.status(404).render('404');
-    });
+    res.redirect(301, `/${id}`);
+    } catch (err) {
+      handleError(res)(err);
+    }
   }
 
-  config.db.query('SELECT * FROM comics ORDER BY date_added ASC')
-    .then((comics) => {
-      if (req.params.id && isNaN(parseInt(req.params.id, 10))) throw new Error('Not valid ID');
+  try {
+    if (req.params.id && isNaN(parseInt(req.params.id, 10))) throw new Error('Not valid ID');
+    const comics = await getComics();
 
-      const reqId = req.params.id ? parseInt(req.params.id, 10) : comics.rows[comics.rowCount - 1].id,
-            comicIndex = comics.rows.findIndex((c) => c.id === reqId);
+    const reqId = req.params.id ? parseInt(req.params.id, 10) : comics[comics.length - 1].id,
+          comicIndex = comics.findIndex((c) => c.id === reqId);
 
-      if (comicIndex < 0) throw new Error(`No comic for ID ${reqId}`);
+    if (comicIndex < 0) throw new Error(`No comic for ID ${reqId}`);
 
-      const comic = comics.rows[comicIndex],
-            prevId = comicIndex === 0 ? null : comics.rows[comicIndex - 1].id,
-            nextId = comicIndex === comics.rowCount - 1 ? null : comics.rows[comicIndex + 1].id;
+    const comic = comics[comicIndex],
+          prevId = comicIndex === 0 ? null : comics[comicIndex - 1].id,
+          nextId = comicIndex === comics.length - 1 ? null : comics[comicIndex + 1].id;
 
-      res.render('show', { comics: comics.rows, comic, prevId, nextId });
-    })
-    .catch((err) => {
-      console.log('ERROR:', err.message, err.stack);
-      res.status(404).render('404');
-    });
+    res.render('show', { comics: comics, comic, prevId, nextId });
+  } catch (err) {
+    handleError(res)(err);
+  }
 });
 
 app.listen(app.get('port'), function() {

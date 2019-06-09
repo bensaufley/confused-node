@@ -22,15 +22,12 @@
   },
   "homepage": "https://github.com/bensaufley/confused-node#readme",
   "dependencies": {
-    "aws-sdk": "^2.41.0",
+    "aws-sdk": "^2.471.0",
     "csv-parse": "^1.2.0",
     "express": "^4.16.3",
     "moment": "^2.22.0",
-    "morgan": "^1.9.0",
+    "morgan": "^1.9.1",
     "pg": "^6.4.2",
-    "pug": "^2.0.0-beta11"
-  },
-  "devDependencies": {
-    "nsp": "^3.2.1"
+    "pug": "^2.0.3"
   }
 }

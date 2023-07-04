@@ -2,7 +2,7 @@
 import config from './config.js';
 import express from 'express';
 import morgan from 'morgan';
-import oldComicListMap from './data/old-comic-list-map.json';
+import oldComicListMap from './data/old-comic-list-map.json' assert { type: 'json' };
 
 const app = express();
 

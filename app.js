@@ -1,14 +1,15 @@
-const config = require('./config.js'),
-      express = require('express'),
-      morgan = require('morgan'),
-      pug = require('pug'),
-      oldComicListMap = require('./data/old-comic-list-map.json'),
-      app = express();
+// @ts-check
+import config from './config.js';
+import express from 'express';
+import morgan from 'morgan';
+import oldComicListMap from './data/old-comic-list-map.json';
 
-const comicsCache = { lastRetrieved: null, comics: [] };
-const expirationLength = 1000 * 60 * 60 * 12;
+const app = express();
+
+const comicsCache = { lastRetrieved: 0, comics: [] };
+const expirationLength = 1_000 * 60 * 60 * 12;
 const getComics = async () => {
-  const now = new Date();
+  const now = Date.now();
   if (comicsCache.comics.length && now - comicsCache.lastRetrieved < expirationLength) {
     return comicsCache.comics;
   }
@@ -35,15 +36,15 @@ app.locals.awsUrl = config.awsUrl;
 
 app.get('/:id?', async (req, res, next) => {
   if (req.query.id) {
-    let reqId = req.query.id;
+    let reqId = /** @type {string} */ (req.query.id);
     let id = reqId;
     try {
-      if (/bensaufley.com\/confused/.test(req.get('Referer')) || req.query.ref === 'old') {
+      if (/bensaufley.com\/confused/.test(/** @type {string} */ (req.get('Referer'))) || req.query.ref === 'old') {
         const comicTitle = oldComicListMap[reqId];
-        const response = await config.db.query('SELECT id FROM comics WHERE title = $1', [comicTitle])
+        const response = await config.db.query('SELECT id FROM comics WHERE title = $1', [comicTitle]);
         id = response.rows[0].id;
       }
-    res.redirect(301, `/${id}`);
+      res.redirect(301, `/${id}`);
     } catch (err) {
       handleError(res)(err);
     }
@@ -53,14 +54,14 @@ app.get('/:id?', async (req, res, next) => {
     if (req.params.id && isNaN(parseInt(req.params.id, 10))) throw new Error('Not valid ID');
     const comics = await getComics();
 
-    const reqId = req.params.id ? parseInt(req.params.id, 10) : comics[comics.length - 1].id,
-          comicIndex = comics.findIndex((c) => c.id === reqId);
+    const reqId = req.params.id ? parseInt(req.params.id, 10) : comics[comics.length - 1].id;
+    const comicIndex = comics.findIndex((c) => c.id === reqId);
 
     if (comicIndex < 0) throw new Error(`No comic for ID ${reqId}`);
 
-    const comic = comics[comicIndex],
-          prevId = comicIndex === 0 ? null : comics[comicIndex - 1].id,
-          nextId = comicIndex === comics.length - 1 ? null : comics[comicIndex + 1].id;
+    const comic = comics[comicIndex];
+    const prevId = comicIndex === 0 ? null : comics[comicIndex - 1].id;
+    const nextId = comicIndex === comics.length - 1 ? null : comics[comicIndex + 1].id;
 
     res.render('show', { comics: comics, comic, prevId, nextId });
   } catch (err) {
@@ -68,7 +69,6 @@ app.get('/:id?', async (req, res, next) => {
   }
 });
 
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), function () {
   console.log('Node app is running on port', app.get('port'));
 });
-
